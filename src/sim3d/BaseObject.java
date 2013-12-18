@@ -1,4 +1,4 @@
-package 3dsim;
+package sim3d;
 
 import java.awt.Color;
 import java.awt.Graphics;

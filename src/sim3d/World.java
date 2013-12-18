@@ -1,4 +1,4 @@
-package 3dsim;
+package sim3d;
 
 import java.util.ArrayList;
 
@@ -33,6 +33,7 @@ public class World extends JPanel implements Runnable {
         this.objects = new ArrayList<BaseObject>();
     }
 
+    @Override
     public void run() {
         JFrame app = new JFrame("3D world");
         app.addWindowListener(new WindowAdapter() {

@@ -1,4 +1,4 @@
-package 3dsim;
+package sim3d;
 
 import java.awt.Graphics;
 import java.awt.Polygon;
