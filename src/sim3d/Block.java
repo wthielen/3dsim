@@ -80,7 +80,7 @@ public class Block extends BaseObject {
             v.add(this.p);
 
             // 各頂点の座標はオブジェクトのXYZ軸に対して計算されたので
-            // ドット積を利用し各頂点の座標を計算して加算
+            // ドット積を利用して各頂点の座標を計算して加算
             v.add(new Vector3d(
                     this.axis[0].dot(this.vertex[i]),
                     this.axis[1].dot(this.vertex[i]),
@@ -97,7 +97,7 @@ public class Block extends BaseObject {
         }
 
         // 各多角形（4角形）に必要な頂点を集める
-        // updateMeshでつかったインデックスと同じ
+        // updateMeshでつかったインデックスと同じ識別子
         int[][] points = {
             { 0, 1, 2, 3 },
             { 1, 5, 6, 2 },

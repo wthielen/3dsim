@@ -56,7 +56,7 @@ public class World extends JPanel implements Runnable {
             repaint();
 
             for(BaseObject o: objects) {
-                o.rotate(new Vector3d(0, 0, 600), new Vector3d(0, 0, 0.1), false);
+                o.rotate(new Vector3d(0, 0, 400), new Vector3d(0, 0, 0.1), true);
             }
 
             try {

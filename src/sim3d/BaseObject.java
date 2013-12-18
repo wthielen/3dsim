@@ -68,28 +68,28 @@ public abstract class BaseObject {
         return this;
     }
 
-    // オブジェクトをベクトルに通じて移動する
+    // オブジェクトをベクトルに通じて移動させる
     public BaseObject translate(Vector3d v) {
         this.p.add(v);
         return this;
     }
 
-    // オブジェクトをベクトルの座標に通じて移動する
+    // オブジェクトをベクトルの座標に通じて移動させる
     public BaseObject translate(double x, double y, double z) {
         this.p.add(new Vector3d(x, y, z));
         return this;
     }
 
-    // XYZ軸をomegaという回転ベクトルによって回転する
+    // XYZ軸をomegaという回転ベクトルによって回転させる
     public BaseObject rotate(Vector3d omega) {
         Vector3d delta = new Vector3d();
 
-        // X軸を回転する
+        // X軸を回転させる
         delta.cross(this.axis[0], omega);
         this.axis[0].add(delta);
         this.axis[0].normalize();
 
-        // Y軸を回転する
+        // Y軸を回転させる
         delta.cross(this.axis[1], omega);
         this.axis[1].add(delta);
         this.axis[1].normalize();
@@ -104,35 +104,35 @@ public abstract class BaseObject {
         return this;
     }
 
-    // オブジェクトの位置をbaseから出てるomegaの回転ベクトルによって回転する
-    // XYZ軸も回転するかどうかというパラメーターあり
+    // オブジェクトの位置をbaseから出ているomegaの回転ベクトルによって回転させる
+    // XYZ軸も回転させるかどうかというパラメーターあり
     public BaseObject rotate(Vector3d base, Vector3d omega, boolean includeAxis) {
         Vector3d delta = new Vector3d();
         Vector3d p_omega = new Vector3d();
 
-        // 回転ベクトルに対するオブジェクトの位置ベクトルを計算
+        // 回転ベクトルに対してオブジェクトの位置ベクトルを計算
         p_omega.sub(this.p, base);
 
-        // このp_omegaのベクトルを回転するためのデルタを計算
+        // このp_omegaのベクトルを回転させるためのデルタを計算
         delta.cross(omega, p_omega);
 
         // p_omegaのサイズを保持するためにサイズを覚える
         double len = p_omega.length();
 
-        // p_omegaを回転して、最初のサイズに縮小する
+        // p_omegaを回転して、最初のサイズにもどす
         p_omega.add(delta);
         p_omega.scale(len/p_omega.length());
 
         // p_omegaから自分の位置を計算する
         this.p.add(base, p_omega);
 
-        // XYZ軸も回転する場合はrotate(omega)を呼び出す
+        // XYZ軸も回転させる場合はrotate(omega)を呼び出す
         if (includeAxis) this.rotate(omega);
 
         return this;
     }
 
-    // オブジェクトを描くけど
+    // オブジェクトを描くが
     // 図形がないのでアブストラクト
     abstract void draw(World w, Graphics g);
 }
