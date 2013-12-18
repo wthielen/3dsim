@@ -14,6 +14,7 @@ public class World extends JPanel implements Runnable {
     public final int width, height;
     public final int focus;
 
+    // この世界に置いてあるオブジェクトのダイナミック収集
     private ArrayList<BaseObject> objects;
 
     public static void main(String[] args) {
@@ -25,6 +26,7 @@ public class World extends JPanel implements Runnable {
         new Thread(w).start();
     }
 
+    // 世界のコンストラクタ
     public World(int width, int height, int focus) {
         this.width = width;
         this.height = height;
@@ -33,6 +35,7 @@ public class World extends JPanel implements Runnable {
         this.objects = new ArrayList<BaseObject>();
     }
 
+    // スレッドを実行する
     @Override
     public void run() {
         JFrame app = new JFrame("3D world");
@@ -48,6 +51,7 @@ public class World extends JPanel implements Runnable {
         app.getContentPane().add(this);
         app.setVisible(true);
 
+        // スレッドのループ
         while(true) {
             repaint();
 
@@ -66,11 +70,13 @@ public class World extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // 登録された全てのオブジェクトを描く
         for(BaseObject o: objects) {
             o.draw(this, g);
         }
     }
 
+    // この世界にオブジェクトを追加
     public void addObject(BaseObject o) {
         this.objects.add(o);
     }
