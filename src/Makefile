@@ -1,6 +1,7 @@
 .SUFFIXES: .java .class
 
 PACKAGE = sim3d
+BINDIR = ../bin
 FILES = \
 		${PACKAGE}/World.java \
 		${PACKAGE}/BaseObject.java \
@@ -13,7 +14,7 @@ classes: $(FILES:.java=.class)
 default: classes
 
 .java.class:
-	javac -cp ${CLASSPATH} -d ../bin $*.java
+	javac -cp ${CLASSPATH} -d ${BINDIR} $*.java
 
 clean:
-	/bin/rm -rf ../bin/${PACKAGE}
+	/bin/rm -rf ${BINDIR}/${PACKAGE}
