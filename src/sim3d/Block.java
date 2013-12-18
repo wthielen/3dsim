@@ -52,7 +52,7 @@ public class Block extends BaseObject {
     }
 
     // サイズが変更されたときに頂点の座標を再計算
-    // この座標はオブジェクトの基本座標ベクトルに基づくもの
+    // この座標はオブジェクトのXYZ軸に対して計算されたもの
     protected void updateMesh() {
         this.vertex[0].set(-this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
         this.vertex[1].set(this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
@@ -79,12 +79,12 @@ public class Block extends BaseObject {
             // オブジェクトの位置へ移動
             v.add(this.p);
 
-            // 各頂点の座標はオブジェクトの座標原点に基づいて計算されたので
+            // 各頂点の座標はオブジェクトのXYZ軸に対して計算されたので
             // ドット積を利用し各頂点の座標を計算して加算
             v.add(new Vector3d(
-                    this.base[0].dot(this.vertex[i]),
-                    this.base[1].dot(this.vertex[i]),
-                    this.base[2].dot(this.vertex[i])
+                    this.axis[0].dot(this.vertex[i]),
+                    this.axis[1].dot(this.vertex[i]),
+                    this.axis[2].dot(this.vertex[i])
                 ));
 
             x[i] = (int)(w.width/2.0 + v.x * w.focus / v.z);

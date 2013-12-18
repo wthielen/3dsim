@@ -18,9 +18,9 @@ public class World extends JPanel implements Runnable {
     private ArrayList<BaseObject> objects;
 
     public static void main(String[] args) {
-        World w = new World(600, 600, 200);
+        World w = new World(600, 600, 300);
 
-        Block b = new Block(new Vector3d(-100, 0, 300), 300, 200, 100);
+        Block b = new Block(new Vector3d(-400, 0, 800), 300, 200, 100);
         w.addObject(b);
 
         new Thread(w).start();
@@ -56,7 +56,7 @@ public class World extends JPanel implements Runnable {
             repaint();
 
             for(BaseObject o: objects) {
-                o.translate(new Vector3d(10, 0, 0));
+                o.rotate(new Vector3d(0, 0, 600), new Vector3d(0, 0, 0.1), false);
             }
 
             try {
