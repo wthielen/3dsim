@@ -56,6 +56,11 @@ public abstract class BaseObject {
         return this.c;
     }
 
+    public BaseObject setColor(Color c) {
+        this.c = c;
+        return this;
+    }
+
     // ベクトルを使用して位置のセッター
     public BaseObject setPosition(Vector3d p) {
         this.p.set(p);

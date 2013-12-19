@@ -1,8 +1,9 @@
 package sim3d;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import java.awt.Graphics;
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -15,13 +16,19 @@ public class World extends JPanel implements Runnable {
     public final int focus;
 
     // この世界に置いてあるオブジェクトのダイナミック収集
-    private ArrayList<BaseObject> objects;
+    private HashMap<String, BaseObject> objects;
 
     public static void main(String[] args) {
         World w = new World(600, 600, 300);
 
-        Block b = new Block(new Vector3d(-400, 0, 800), 300, 200, 100);
-        w.addObject(b);
+        Rectangle red = new Rectangle(new Vector3d(15, 0, 500), 40, 40);
+        Rectangle blue = new Rectangle(new Vector3d(15, -150, 400), 20, 20);
+
+        red.setColor(Color.RED);
+        blue.setColor(Color.BLUE);
+
+        w.addObject(red, "red");
+        w.addObject(blue, "blue");
 
         new Thread(w).start();
     }
@@ -32,7 +39,7 @@ public class World extends JPanel implements Runnable {
         this.height = height;
         this.focus = focus;
 
-        this.objects = new ArrayList<BaseObject>();
+        this.objects = new HashMap<String, BaseObject>();
     }
 
     // スレッドを実行する
@@ -55,9 +62,8 @@ public class World extends JPanel implements Runnable {
         while(true) {
             repaint();
 
-            for(BaseObject o: objects) {
-                o.rotate(new Vector3d(0, 0, 800), new Vector3d(0, 0, 0.1), false);
-            }
+            objects.get("blue")
+                .rotate(new Vector3d(15, 0, 350), new Vector3d(-0.2, 0, 0), false);
 
             try {
                 Thread.sleep(100);
@@ -71,13 +77,36 @@ public class World extends JPanel implements Runnable {
         super.paintComponent(g);
 
         // 登録された全てのオブジェクトを描く
-        for(BaseObject o: objects) {
+        for(BaseObject o: this.getDrawables()) {
             o.draw(this, g);
         }
     }
 
     // この世界にオブジェクトを追加
-    public void addObject(BaseObject o) {
-        this.objects.add(o);
+    public void addObject(BaseObject o, String id) {
+        this.objects.put(id, o);
+    }
+
+    // オブジェクトをゲット
+    public BaseObject getObject(String id) {
+        return this.objects.get(id);
+    }
+
+    // Z座標の順番でオブジェクトをソートして返す
+    public List<BaseObject> getDrawables() {
+        List<BaseObject> drawables = new ArrayList<BaseObject>(objects.values());
+        Comparator<BaseObject> zIndex = new Comparator<BaseObject>() {
+            public int compare(BaseObject u, BaseObject v) {
+                Vector3d up, vp;
+                up = u.getPosition();
+                vp = v.getPosition();
+
+                if (up.z == vp.z) return 0;
+                return up.z > vp.z ? -1 : 1;
+            }
+        };
+        Collections.sort(drawables, zIndex);
+
+        return drawables;
     }
 }

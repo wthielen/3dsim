@@ -15,11 +15,6 @@ public class Block extends BaseObject {
         super();
         this.sizeX = this.sizeY = this.sizeZ = 1.0;
 
-        this.vertex = new Vector3d[8];
-        for(int i = 0; i < 8; i++) {
-            this.vertex[i] = new Vector3d();
-        }
-
         this.updateMesh();
     }
 
@@ -27,11 +22,6 @@ public class Block extends BaseObject {
     public Block(Vector3d p) {
         super(p);
         this.sizeX = this.sizeY = this.sizeZ = 1.0;
-
-        this.vertex = new Vector3d[8];
-        for(int i = 0; i < 8; i++) {
-            this.vertex[i] = new Vector3d();
-        }
 
         this.updateMesh();
     }
@@ -43,17 +33,19 @@ public class Block extends BaseObject {
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
 
-        this.vertex = new Vector3d[8];
-        for(int i = 0; i < 8; i++) {
-            this.vertex[i] = new Vector3d();
-        }
-
         this.updateMesh();
     }
 
     // サイズが変更されたときに頂点の座標を再計算
     // この座標はオブジェクトのXYZ軸に対して計算されたもの
     protected void updateMesh() {
+        if (null == this.vertex) {
+            this.vertex = new Vector3d[8];
+            for(int i = 0; i < 8; i++) {
+                this.vertex[i] = new Vector3d();
+            }
+        }
+
         this.vertex[0].set(-this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
         this.vertex[1].set(this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
         this.vertex[2].set(this.sizeX/2.0, -this.sizeY/2.0, this.sizeZ/2.0);
@@ -65,6 +57,7 @@ public class Block extends BaseObject {
         this.vertex[7].set(-this.sizeX/2.0, -this.sizeY/2.0, -this.sizeZ/2.0);
     }
 
+    // ブロックを描く
     public void draw(World w, Graphics g) {
         g.setColor(this.c);
 

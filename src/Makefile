@@ -7,7 +7,7 @@ FILES = \
 		${PACKAGE}/BaseObject.java \
 		${PACKAGE}/Block.java
 
-CLASSPATH = .:/usr/share/java/vecmath.jar
+CLASSPATH = .:/usr/share/java/vecmath.jar:/usr/share/java/commons-collections3.jar
 
 classes: $(FILES:.java=.class)
 
