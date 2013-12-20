@@ -2,27 +2,24 @@ package sim3d;
 
 import java.awt.Graphics;
 import java.awt.Polygon;
+import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 // ブロッククラス
 // このブロックは高・幅・奥の３つのサイズを持っている
 public class Block extends BaseObject {
-    protected double sizeX, sizeY, sizeZ;
-    protected Vector3d[] vertex;
+    protected double sizeX = 1.0, sizeY = 1.0, sizeZ = 1.0;
+    protected int nVertex = 8;
 
     // (0, 0, 0)に位置される1x1x1のブロックを作成
     public Block() {
         super();
-        this.sizeX = this.sizeY = this.sizeZ = 1.0;
-
         this.updateMesh();
     }
 
     // p に位置される1x1x1のブロックを作成
     public Block(Vector3d p) {
         super(p);
-        this.sizeX = this.sizeY = this.sizeZ = 1.0;
-
         this.updateMesh();
     }
 
@@ -36,15 +33,14 @@ public class Block extends BaseObject {
         this.updateMesh();
     }
 
+    protected int getVertexCount() {
+        return this.nVertex;
+    }
+
     // サイズが変更されたときに頂点の座標を再計算
     // この座標はオブジェクトのXYZ軸に対して計算されたもの
     protected void updateMesh() {
-        if (null == this.vertex) {
-            this.vertex = new Vector3d[8];
-            for(int i = 0; i < 8; i++) {
-                this.vertex[i] = new Vector3d();
-            }
-        }
+        this.initVertices();
 
         this.vertex[0].set(-this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
         this.vertex[1].set(this.sizeX/2.0, this.sizeY/2.0, this.sizeZ/2.0);
@@ -58,31 +54,10 @@ public class Block extends BaseObject {
     }
 
     // ブロックを描く
-    public void draw(World w, Graphics g) {
+    public void draw(Graphics g) {
         g.setColor(this.c);
 
-        int x[] = new int[8];
-        int y[] = new int[8];
-
-        Vector3d v = new Vector3d();
-        for(int i = 0; i < 8; i++) {
-            // 0, 0, 0 から始まる
-            v.set(0, 0, 0);
-
-            // オブジェクトの位置へ移動
-            v.add(this.p);
-
-            // 各頂点の座標はオブジェクトのXYZ軸に対して計算されたので
-            // ドット積を利用して各頂点の座標を計算して加算
-            v.add(new Vector3d(
-                    this.axis[0].dot(this.vertex[i]),
-                    this.axis[1].dot(this.vertex[i]),
-                    this.axis[2].dot(this.vertex[i])
-                ));
-
-            x[i] = (int)(w.width/2.0 + v.x * w.focus / v.z);
-            y[i] = (int)(w.height/2.0 - v.y * w.focus / v.z);
-        }
+        Vector2d xy[] = this.mapVertices();
 
         Polygon p[] = new Polygon[6];
         for(int i = 0; i < 6; i++) {
@@ -102,7 +77,7 @@ public class Block extends BaseObject {
 
         for(int i = 0; i < 6; i++) {
             for(int j: points[i]) {
-                p[i].addPoint(x[j], y[j]);
+                p[i].addPoint((int)(xy[j].x), (int)(xy[j].y));
             }
 
             g.drawPolygon(p[i]);

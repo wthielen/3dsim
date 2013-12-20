@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 public class World extends JPanel implements Runnable {
     public final int width, height;
     public final int focus;
+    public final int fps = 60;
 
     // この世界に置いてあるオブジェクトのダイナミック収集
     private HashMap<String, BaseObject> objects;
@@ -21,14 +22,21 @@ public class World extends JPanel implements Runnable {
     public static void main(String[] args) {
         World w = new World(600, 600, 300);
 
+        Block b = new Block(new Vector3d(-100, 50, 450), 200, 100, 50);
         Rectangle red = new Rectangle(new Vector3d(15, 0, 500), 40, 40);
         Rectangle blue = new Rectangle(new Vector3d(15, -150, 400), 20, 20);
+        Ellipse yellow = new Ellipse(new Vector3d(-150, 10, 400), 20, 20);
+
+        yellow.setSmoothness(50);
 
         red.setColor(Color.RED);
         blue.setColor(Color.BLUE);
+        yellow.setColor(Color.YELLOW);
 
         w.addObject(red, "red");
         w.addObject(blue, "blue");
+        w.addObject(yellow, "yellow");
+        w.addObject(b, "block");
 
         new Thread(w).start();
     }
@@ -63,10 +71,13 @@ public class World extends JPanel implements Runnable {
             repaint();
 
             objects.get("blue")
-                .rotate(new Vector3d(15, 0, 350), new Vector3d(-0.2, 0, 0), false);
+                .rotate(new Vector3d(15, 0, 350), new Vector3d(-Math.PI/2.0, 0, 0), false);
+
+            objects.get("yellow")
+                .rotate(new Vector3d(15, 0, 350), new Vector3d(0, -Math.PI/2.0, 0), false);
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000 / this.fps);
             } catch(InterruptedException e) {
             }
         }
@@ -78,12 +89,13 @@ public class World extends JPanel implements Runnable {
 
         // 登録された全てのオブジェクトを描く
         for(BaseObject o: this.getDrawables()) {
-            o.draw(this, g);
+            o.draw(g);
         }
     }
 
     // この世界にオブジェクトを追加
     public void addObject(BaseObject o, String id) {
+        o.setWorld(this);
         this.objects.put(id, o);
     }
 
