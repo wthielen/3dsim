@@ -2,7 +2,6 @@ package sim3d;
 
 import java.awt.Graphics;
 import java.awt.Polygon;
-import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 // ブロッククラス
@@ -57,7 +56,7 @@ public class Block extends BaseObject {
     public void draw(Graphics g) {
         g.setColor(this.c);
 
-        Vector2d xy[] = this.mapVertices();
+        Vector3d xy[] = this.mapVertices();
 
         Polygon p[] = new Polygon[6];
         for(int i = 0; i < 6; i++) {

@@ -22,12 +22,12 @@ public class World extends JPanel implements Runnable {
     public static void main(String[] args) {
         World w = new World(600, 600, 300);
 
-        Block b = new Block(new Vector3d(-100, 50, 450), 200, 100, 50);
+        Block b = new Block(new Vector3d(-100, 0, 450), 200, 100, 50);
         Rectangle red = new Rectangle(new Vector3d(15, 0, 500), 40, 40);
         Rectangle blue = new Rectangle(new Vector3d(15, -150, 400), 20, 20);
         Ellipse yellow = new Ellipse(new Vector3d(-150, 10, 400), 20, 20);
 
-        yellow.setSmoothness(50);
+        yellow.setSmoothness(24);
 
         red.setColor(Color.RED);
         blue.setColor(Color.BLUE);
@@ -76,6 +76,9 @@ public class World extends JPanel implements Runnable {
             objects.get("yellow")
                 .rotate(new Vector3d(15, 0, 350), new Vector3d(0, -Math.PI/2.0, 0), false);
 
+            objects.get("block")
+                .rotate(new Vector3d(Math.PI/4.0, Math.PI/4.0, 0));
+
             try {
                 Thread.sleep(1000 / this.fps);
             } catch(InterruptedException e) {
@@ -104,7 +107,7 @@ public class World extends JPanel implements Runnable {
         return this.objects.get(id);
     }
 
-    // Z座標の順番でオブジェクトをソートして返す
+    // Z座標の順にオブジェクトをソートして返す
     public List<BaseObject> getDrawables() {
         List<BaseObject> drawables = new ArrayList<BaseObject>(objects.values());
         Comparator<BaseObject> zIndex = new Comparator<BaseObject>() {

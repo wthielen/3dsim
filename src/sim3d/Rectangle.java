@@ -2,7 +2,6 @@ package sim3d;
 
 import java.awt.Graphics;
 import java.awt.Polygon;
-import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 // 四角形のクラス 
@@ -53,7 +52,7 @@ public class Rectangle extends BaseObject {
 
         g.setColor(this.c);
 
-        Vector2d xy[] = this.mapVertices();
+        Vector3d xy[] = this.mapVertices();
 
         Polygon p = new Polygon();
         for(int i = 0; i < this.nVertex; i++) {

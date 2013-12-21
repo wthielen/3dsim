@@ -2,7 +2,6 @@ package sim3d;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 public abstract class BaseObject {
@@ -52,10 +51,10 @@ public abstract class BaseObject {
 
     // 計算された3Dの頂点全てから
     // 一点透視図法によって2D座標を計算する
-    protected Vector2d[] mapVertices() {
+    protected Vector3d[] mapVertices() {
         int nVertex = this.getVertexCount();
 
-        Vector2d xy[] = new Vector2d[nVertex];
+        Vector3d xy[] = new Vector3d[nVertex];
         Vector3d v = new Vector3d();
         for(int i = 0; i < nVertex; i++) {
             // 0, 0, 0 から始まる
@@ -72,9 +71,10 @@ public abstract class BaseObject {
                     this.axis[2].dot(this.vertex[i])
                 ));
 
-            xy[i] = new Vector2d(
+            xy[i] = new Vector3d(
                     this.w.width/2.0 + v.x * this.w.focus / v.z,
-                    this.w.height/2.0 - v.y * this.w.focus / v.z
+                    this.w.height/2.0 - v.y * this.w.focus / v.z,
+                    0
                 );
         }
 
