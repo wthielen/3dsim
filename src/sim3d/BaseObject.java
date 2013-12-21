@@ -162,11 +162,11 @@ public abstract class BaseObject {
         this.axis[1].normalize();
 
         // Z軸は新しいY軸とX軸のクロス積から計算する
-        this.axis[2].cross(this.axis[1], this.axis[0]);
+        this.axis[2].cross(this.axis[0], this.axis[1]);
 
         // X軸とY軸が垂直であることを確保するため
         // Y軸をX軸とZ軸のクロス積から計算する
-        this.axis[1].cross(this.axis[0], this.axis[2]);
+        this.axis[1].cross(this.axis[2], this.axis[0]);
 
         return this;
     }
