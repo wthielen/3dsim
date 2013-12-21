@@ -50,7 +50,7 @@ public abstract class BaseObject {
     }
 
     // 計算された3Dの頂点全てから
-    // 一点透視図法によって2D座標を計算する
+    // 世界に設定された焦点深度によって2D座標を計算する
     protected Vector3d[] mapVertices() {
         int nVertex = this.getVertexCount();
 
