@@ -39,7 +39,7 @@ This way, all the vertices for this object are also translated, without having t
 Rotation
 --------
 
-Rotation is performed using rotation vectors. Classical mechanics teach us that the crossproduct of the rotation vector with the position vector gives us the positional displacement, or actually the speed vector from that position. This speed vector or displacement is called `delta` here:
+Rotation is performed using rotation vectors. Classical mechanics teach us that the cross product of the rotation vector with the position vector gives us the positional displacement, or actually the speed vector from that position. This speed vector or displacement is called `delta` here:
 
     delta = p x omega;
 
