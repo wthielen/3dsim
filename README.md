@@ -17,7 +17,7 @@ In this example I am creating a world that is projected on a screen of 600x600, 
 Objects
 -------
 
-Every object is derived from a `BaseObject` class. This `BaseObject` has a placement vector `p`, and its own set of XYZ coordinate vectors `axis[3]`. The coordinates of the vertices needed to draw this object, are calculated with respect to this set of XYZ coordinate vectors. These coordinate vectors are placed at the position of the placement vector of this object.
+Every object is derived from a `BaseObject` class. This `BaseObject` has a placement vector `p`, and its own set of XYZ axis vectors `axis[3]`. The coordinates of the vertices needed to draw this object, are calculated with respect to this set of XYZ axis vectors. These axis vectors are placed at the position of the placement vector of this object.
 
 So a vertix on position `v = (v.x, v.y, v.z)` will actually be placed in the 3D space on position `(p.x + axis[X] x v, p.y + axis[Y] x v, p.z + axis[Z] x v)` where `x` is the dot product operation. This calculation is done in the `mapVertices` function that returns an array of X and Y coordinates for every vertix mapped on the projection screen.
 
