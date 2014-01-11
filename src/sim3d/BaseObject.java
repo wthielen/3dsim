@@ -148,16 +148,16 @@ public abstract class BaseObject {
     // XYZ軸をomegaという回転ベクトルによって回転させる
     public BaseObject rotate(Vector3d omega) {
         Vector3d delta = new Vector3d();
-        Vector3d real_omega = new Vector3d(omega);
-        real_omega.scale(1.0/this.w.fps);
 
         // X軸を回転させる
-        delta.cross(this.axis[0], real_omega);
+        delta.cross(this.axis[0], omega);
+        delta.scale(1.0/this.w.fps);
         this.axis[0].add(delta);
         this.axis[0].normalize();
 
         // Y軸を回転させる
-        delta.cross(this.axis[1], real_omega);
+        delta.cross(this.axis[1], omega);
+        delta.scale(1.0/this.w.fps);
         this.axis[1].add(delta);
         this.axis[1].normalize();
 
@@ -175,18 +175,17 @@ public abstract class BaseObject {
     // XYZ軸も回転させるかどうかというパラメーターあり
     public BaseObject rotate(Vector3d base, Vector3d omega, boolean includeAxis) {
         Vector3d delta = new Vector3d();
-        Vector3d real_omega = new Vector3d(omega);
         Vector3d p_omega = new Vector3d();
-
-        // 1秒あたり |omega| のアングルで回転するので
-        // 世界のFPSによる除算して今度のフレームのomegaを計算する
-        real_omega.scale(1.0/this.w.fps);
 
         // 回転ベクトルに対してオブジェクトの位置ベクトルを計算
         p_omega.sub(this.p, base);
 
         // このp_omegaのベクトルを回転させるためのデルタを計算
-        delta.cross(real_omega, p_omega);
+        delta.cross(omega, p_omega);
+
+        // 1秒あたり |omega| のアングルで回転するので
+        // 世界のFPSによる除算して今度のフレームだけの移動を計算する
+        delta.scale(1.0/this.w.fps);
 
         // p_omegaのサイズを保持するためにサイズを覚える
         double len = p_omega.length();
