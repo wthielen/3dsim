@@ -61,9 +61,7 @@ By rotating the object's axes, we have also rotated all the vertices for this ob
 Rotation speed
 --------------
 
-The length of the rotation vector is the rotation speed in radians per second. But the `World` presentation is redrawn at a rate of `World.fps` frames per second. So we need to rescale the rotation vector to get the vector responsible for the displacement for one frame. This is done by:
+The length of the rotation vector is the rotation speed in radians per second. But the `World` presentation is redrawn at a rate of `World.fps` frames per second. So we need to rescale the displacement vector to get the vector responsible for the current frame's displacement. This is done by:
 
-    real_omega = new Vector3d(omega);
-    real_omega.scale(1.0/this.w.fps);
-
-And then we calculate the displacement using this `real_omega` vector.
+    delta.cross(p, omega);
+    delta.scale(1.0/this.w.fps);
