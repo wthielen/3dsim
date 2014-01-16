@@ -3,6 +3,7 @@ package sim3d;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Quat4d;
 
 public abstract class BaseObject {
     // このオブジェクトが存在している世界のプロパティ
@@ -149,24 +150,10 @@ public abstract class BaseObject {
     public BaseObject rotate(Vector3d omega) {
         Vector3d delta = new Vector3d();
 
-        // X軸を回転させる
-        delta.cross(this.axis[0], omega);
-        delta.scale(1.0/this.w.fps);
-        this.axis[0].add(delta);
-        this.axis[0].normalize();
-
-        // Y軸を回転させる
-        delta.cross(this.axis[1], omega);
-        delta.scale(1.0/this.w.fps);
-        this.axis[1].add(delta);
-        this.axis[1].normalize();
-
-        // Z軸は新しいY軸とX軸のクロス積から計算する
-        this.axis[2].cross(this.axis[0], this.axis[1]);
-
-        // X軸とY軸が垂直であることを確保するため
-        // Y軸をX軸とZ軸のクロス積から計算する
-        this.axis[1].cross(this.axis[2], this.axis[0]);
+        // 各軸を回転させる
+        for (int i = 0; i < 3; i++) {
+            this.axis[i] = this._rotate(omega, this.axis[i]);
+        }
 
         return this;
     }
@@ -180,20 +167,8 @@ public abstract class BaseObject {
         // 回転ベクトルに対してオブジェクトの位置ベクトルを計算
         p_omega.sub(this.p, base);
 
-        // このp_omegaのベクトルを回転させるためのデルタを計算
-        delta.cross(omega, p_omega);
-
-        // 1秒あたり |omega| のアングルで回転するので
-        // 世界のFPSによる除算して今度のフレームだけの移動を計算する
-        delta.scale(1.0/this.w.fps);
-
-        // p_omegaのサイズを保持するためにサイズを覚える
-        double len = p_omega.length();
-
-        // p_omegaを移動して、最初のサイズにもどすと
-        // 位置ベクトルが回転したというわけです
-        p_omega.add(delta);
-        p_omega.scale(len/p_omega.length());
+        // このp_omegaのベクトルを回転させる
+        p_omega = this._rotate(omega, p_omega);
 
         // p_omegaから自分の位置を計算する
         // p = base + p_omega
@@ -203,6 +178,39 @@ public abstract class BaseObject {
         if (includeAxis) this.rotate(omega);
 
         return this;
+    }
+
+    // ベクトルを簡単に回転させるメソッド
+    // クォータニオンを使って回転させる
+    private Vector3d _rotate(Vector3d omega, Vector3d v) {
+        double angle = omega.length() / this.w.fps / 2.0;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        // 回転ベクトルをクォータニオンベクトルに変更
+        Quat4d q1 = new Quat4d(
+                omega.x * sin,
+                omega.y * sin,
+                omega.z * sin,
+                cos
+            );
+        q1.normalize();
+
+        // クォータニオンの複素共役(conjugate)を作る
+        Quat4d q2 = new Quat4d(q1);
+        q2.conjugate();
+
+        // ベクトルを回転させる
+        Quat4d rotated = new Quat4d();
+        Quat4d qv = new Quat4d(v.x, v.y, v.z, 0);
+        rotated.mul(q1, qv);
+        rotated.mul(q2);
+
+        // 返すベクトルを作って、元のサイズに戻す
+        Vector3d ret = new Vector3d(rotated.x, rotated.y, rotated.z);
+        ret.scale(v.length());
+
+        return ret;
     }
 
     // オブジェクトを描くが
