@@ -6,25 +6,26 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Quat4d;
 
 public abstract class BaseObject {
-    // このオブジェクトが存在している世界のプロパティ
-    // 例えば focus と fps をアクセスするために
-    // ここに世界を保存する
+    // The world this object is put in
+    // Needed to be able to access its focus and fps
+    // variables
     protected World w;
 
-    // 3Dのベクトルクラスを使用して位置を設定
+    // The position coordinates in 3D
     protected Vector3d p;
 
-    // このオブジェクトにとっての自分のXYZ軸
+    // The XYZ axis vectors for this object
     protected Vector3d[] axis;
 
-    // 色
+    // This object's color
     protected Color c = Color.BLACK;
 
-    // 頂点の数と収集
+    // Number of vertices, and its collection
     protected int nVertex;
     protected Vector3d[] vertex;
+    protected Triangle[] triangle;
 
-    // 軸のベクトルを作成する
+    // Initialize the axis vectors
     private void initAxis() {
         this.axis = new Vector3d[3];
         this.axis[0] = new Vector3d(1, 0, 0);
@@ -32,7 +33,7 @@ public abstract class BaseObject {
         this.axis[2] = new Vector3d(0, 0, 1);
     }
 
-    // 描くための必要な頂点を作成する
+    // Prepare the vertex collection
     protected void initVertices() {
         int nVertex = this.getVertexCount();
 
@@ -44,33 +45,22 @@ public abstract class BaseObject {
         }
     }
 
-    // クラスメンバーがoverrideされていないので
-    // このメソッドに通じてクラスの頂点数をアクセスする
+    // Because in Java, class members are not overridden but only
+    // class methods, we override the nVertex property by using
+    // this class method
     protected int getVertexCount() {
         return this.nVertex;
     }
 
-    // 計算された3Dの頂点全てから
-    // 世界に設定された焦点深度によって2D座標を計算する
+    // Convert all the vertices to the 2D coordinates
+    // for the World's projection
     protected Vector3d[] mapVertices() {
         int nVertex = this.getVertexCount();
 
         Vector3d xy[] = new Vector3d[nVertex];
         Vector3d v = new Vector3d();
         for(int i = 0; i < nVertex; i++) {
-            // 0, 0, 0 から始まる
-            v.set(0, 0, 0);
-
-            // オブジェクトの位置へ移動
-            v.add(this.p);
-
-            // 各頂点の座標はオブジェクトのXYZ軸に対して計算されたので
-            // ドット積を利用して各頂点の座標を計算して加算
-            v.add(new Vector3d(
-                    this.axis[0].dot(this.vertex[i]),
-                    this.axis[1].dot(this.vertex[i]),
-                    this.axis[2].dot(this.vertex[i])
-                ));
+            v = this.getWorldVertex(this.vertex[i]);
 
             xy[i] = new Vector3d(
                     this.w.width/2.0 + v.x * this.w.focus / v.z,
@@ -82,75 +72,95 @@ public abstract class BaseObject {
         return xy;
     }
 
-    // デフォルトコンストラクタ
+    // Convert the vertix to the 3D coordinates within the World
+    // itself, i.e. with respect to the observer at position 
+    // (0, 0, 0) in the World
+    public Vector3d getWorldVertex(Vector3d v) {
+        Vector3d ret = new Vector3d();
+        ret.add(this.p);
+        ret.add(new Vector3d(
+                    this.axis[0].dot(v),
+                    this.axis[1].dot(v),
+                    this.axis[2].dot(v)
+                ));
+
+        return ret;
+    }
+
+    // Default constructor
     public BaseObject() {
         this.p = new Vector3d();
         this.initAxis();
     }
 
-    // ベクトルを使用コンストラクタ
+    // Constructor using position vector
     public BaseObject(Vector3d p) {
         this.p = p;
         this.initAxis();
     }
 
-    // 座標を使用コンストラクタ
+    // Constructor using position coordinates
     public BaseObject(double x, double y, double z) {
         this.p = new Vector3d(x, y, z);
         this.initAxis();
     }
 
-    // 位置のゲッター
+    // Get position
     public Vector3d getPosition() {
         return this.p;
     }
 
-    // 色のゲッター
+    // Get color
     public Color getColor() {
         return this.c;
     }
 
-    // 世界のセッター
+    // Set corresponding World
     public BaseObject setWorld(World w) {
         this.w = w;
         return this;
     }
 
-    // ベクトルを使用して位置のセッター
+    // Get corresponding World
+    public World getWorld() {
+        return this.w;
+    }
+
+    // Set position using a vector
     public BaseObject setPosition(Vector3d p) {
         this.p.set(p);
         return this;
     }
 
-    // 座標を使用して位置のセッター
+    // Set position using 3D coordinates
     public BaseObject setPosition(double x, double y, double z) {
         this.p.set(x, y, z);
         return this;
     }
 
-    // 色のセッター
+    // Set color
     public BaseObject setColor(Color c) {
         this.c = c;
         return this;
     }
 
-    // オブジェクトをベクトルに通じて移動させる
+    // Move the object along a translation vector
     public BaseObject translate(Vector3d v) {
         this.p.add(v);
         return this;
     }
 
-    // オブジェクトをベクトルの座標に通じて移動させる
+    // Move the object along a translation vector of the given coordinates
     public BaseObject translate(double x, double y, double z) {
         this.p.add(new Vector3d(x, y, z));
         return this;
     }
 
-    // XYZ軸をomegaという回転ベクトルによって回転させる
+    // Rotate the object itself using the given rotation vector
     public BaseObject rotate(Vector3d omega) {
         Vector3d delta = new Vector3d();
 
-        // 各軸を回転させる
+        // Rotate each axis vector
         for (int i = 0; i < 3; i++) {
             this.axis[i] = this._rotate(omega, this.axis[i]);
         }
@@ -158,36 +168,37 @@ public abstract class BaseObject {
         return this;
     }
 
-    // オブジェクトの位置をbaseから出ているomegaの回転ベクトルによって回転させる
-    // XYZ軸も回転させるかどうかというパラメーターあり
+    // Rotate the object around a certain point "base". The includeAxis parameter
+    // tells the function whether to also rotate the axis vectors or not. Try both
+    // settings to see the effect.
     public BaseObject rotate(Vector3d base, Vector3d omega, boolean includeAxis) {
         Vector3d delta = new Vector3d();
         Vector3d p_omega = new Vector3d();
 
-        // 回転ベクトルに対してオブジェクトの位置ベクトルを計算
+        // Prepare a vector from base to the object's location
         p_omega.sub(this.p, base);
 
-        // このp_omegaのベクトルを回転させる
+        // This is the vector we will rotate
         p_omega = this._rotate(omega, p_omega);
 
-        // p_omegaから自分の位置を計算する
+        // Now we set the location of the object to whatever the new
+        // p_omega points to, by adding base to it
         // p = base + p_omega
         this.p.add(base, p_omega);
 
-        // XYZ軸も回転させる場合はrotate(omega)を呼び出す
+        // If we also want to rotate the axis vectors, do this
         if (includeAxis) this.rotate(omega);
 
         return this;
     }
 
-    // ベクトルを簡単に回転させるメソッド
-    // クォータニオンを使って回転させる
+    // The actual vector rotation function using quaternions
     private Vector3d _rotate(Vector3d omega, Vector3d v) {
         double angle = omega.length() / this.w.fps / 2.0;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        // 回転ベクトルをクォータニオンベクトルに変更
+        // Convert the rotation vector into a rotation quaternion
         Quat4d q1 = new Quat4d(
                 omega.x * sin,
                 omega.y * sin,
@@ -196,24 +207,25 @@ public abstract class BaseObject {
             );
         q1.normalize();
 
-        // クォータニオンの複素共役(conjugate)を作る
+        // Get the quaternion's conjugate
         Quat4d q2 = new Quat4d(q1);
         q2.conjugate();
 
-        // ベクトルを回転させる
+        // Perform the rotation
         Quat4d rotated = new Quat4d();
         Quat4d qv = new Quat4d(v.x, v.y, v.z, 0);
         rotated.mul(q1, qv);
         rotated.mul(q2);
 
-        // 返すベクトルを作って、元のサイズに戻す
+        // Get the X, Y and Z from the resulting rotated quaternion, and
+        // resize the vector to its original length
         Vector3d ret = new Vector3d(rotated.x, rotated.y, rotated.z);
         ret.scale(v.length());
 
         return ret;
     }
 
-    // オブジェクトを描くが
-    // 図形がないのでアブストラクト
+    // Draw the object, but since we don't know its shape
+    // it's an abstract function
     abstract void draw(Graphics g);
 }

@@ -4,24 +4,24 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 import javax.vecmath.Vector3d;
 
-// 楕円のクラス
+// Ellipse class
 public class Ellipse extends BaseObject {
     protected double width = 1.0, height = 1.0;
     protected int nVertex = 80;
 
-    // (0, 0, 0)に位置される1x1の楕円を作成
+    // Default constructor to create a 1x1 ellipse at (0, 0, 0)
     public Ellipse() {
         super();
         this.updateMesh();
     }
 
-    // p に位置される1x1の楕円を作成
+    // Constructor to create a 1x1 ellipse at position p
     public Ellipse(Vector3d p) {
         super(p);
         this.updateMesh();
     }
 
-    // p に位置されるwidth x heightの楕円を作成
+    // Constructor to create a width x height ellipse at position p
     public Ellipse(Vector3d p, double width, double height) {
         super(p);
         this.width = width;
@@ -30,7 +30,8 @@ public class Ellipse extends BaseObject {
         this.updateMesh();
     }
 
-    // 楕円の解像度を設定する
+    // Sets the smoothness of this ellipse. This number is the number
+    // of vertices on a quarter arc of the ellipse.
     public Ellipse setSmoothness(int smoothness) {
         this.nVertex = 4 * smoothness;
 
@@ -38,13 +39,14 @@ public class Ellipse extends BaseObject {
         return this;
     }
 
-    // このオブジェクトを描くのに必要な頂点数を返す
+    // Returns the vertex count of this object
     protected int getVertexCount() {
         return this.nVertex;
     }
 
-    // サイズまたは解像度が変更されたときに頂点の座標を再計算
-    // この座標はオブジェクトのXYZ軸に対して計算されたもの
+    // When the size or the smoothness changes, it needs to recalculate
+    // the vertices. These vertices are calculated based on the ellipse's
+    // XYZ axis vectors.
     protected void updateMesh() {
         this.initVertices();
 
@@ -54,7 +56,7 @@ public class Ellipse extends BaseObject {
         }
     }
 
-    // 楕円を描く
+    // Draw the ellipse
     public void draw(Graphics g) {
         if (this.p.z < 0) return;
         

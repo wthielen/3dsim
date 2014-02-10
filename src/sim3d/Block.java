@@ -4,25 +4,25 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 import javax.vecmath.Vector3d;
 
-// ブロッククラス
-// このブロックは高・幅・奥の３つのサイズを持っている
+// Block class
+// A block has sizes in 3 dimensions: width,  height and depth
 public class Block extends BaseObject {
     protected double sizeX = 1.0, sizeY = 1.0, sizeZ = 1.0;
     protected int nVertex = 8;
 
-    // (0, 0, 0)に位置される1x1x1のブロックを作成
+    // Default constructor to create a 1x1x1 block at (0, 0, 0)
     public Block() {
         super();
         this.updateMesh();
     }
 
-    // p に位置される1x1x1のブロックを作成
+    // A constructor to create a 1x1x1 block at position p
     public Block(Vector3d p) {
         super(p);
         this.updateMesh();
     }
 
-    // p に位置されるsizeX x sizeY x sizeZのブロックを作成
+    // A constructor to create a sizeX x sizeY x sizeZ block at position p
     public Block(Vector3d p, double sizeX, double sizeY, double sizeZ) {
         super(p);
         this.sizeX = sizeX;
@@ -32,12 +32,13 @@ public class Block extends BaseObject {
         this.updateMesh();
     }
 
+    // Returns the number of vertices for this object
     protected int getVertexCount() {
         return this.nVertex;
     }
 
-    // サイズが変更されたときに頂点の座標を再計算
-    // この座標はオブジェクトのXYZ軸に対して計算されたもの
+    // When the block's size has been updated, the mesh's vertices
+    // need to be recalculated. This function does that.
     protected void updateMesh() {
         this.initVertices();
 
@@ -52,7 +53,7 @@ public class Block extends BaseObject {
         this.vertex[7].set(-this.sizeX/2.0, -this.sizeY/2.0, -this.sizeZ/2.0);
     }
 
-    // ブロックを描く
+    // Draw the block
     public void draw(Graphics g) {
         g.setColor(this.c);
 
@@ -63,8 +64,9 @@ public class Block extends BaseObject {
             p[i] = new Polygon();
         }
 
-        // 各多角形（4角形）に必要な頂点を集める
-        // updateMeshでつかったインデックスと同じ識別子
+        // These are six rectangular polygons and the numbers
+        // refer to the indexes of those points according to
+        // the order as used by the updateMesh function
         int[][] points = {
             { 0, 1, 2, 3 },
             { 1, 5, 6, 2 },

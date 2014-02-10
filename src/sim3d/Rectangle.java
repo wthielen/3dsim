@@ -4,24 +4,24 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 import javax.vecmath.Vector3d;
 
-// 四角形のクラス 
+// A rectangle class
 public class Rectangle extends BaseObject {
     protected double width = 1.0, height = 1.0;
     protected int nVertex = 4;
 
-    // (0, 0, 0)に位置される1x1の四角形を作成
+    // Default constructor to create a 1x1 rectangle on position (0, 0, 0)
     public Rectangle() {
         super();
         this.updateMesh();
     }
 
-    // p に位置される1x1の四角形を作成
+    // Constructor to create a 1x1 rectangle on position (0, 0, 0)
     public Rectangle(Vector3d p) {
         super(p);
         this.updateMesh();
     }
 
-    // p に位置されるwidth x heightの四角形を作成
+    // Constructor to create a width x height rectangle on positon (0, 0, 0)
     public Rectangle(Vector3d p, double width, double height) {
         super(p);
         this.width = width;
@@ -30,13 +30,14 @@ public class Rectangle extends BaseObject {
         this.updateMesh();
     }
 
-    // このオブジェクトを描くのに必要な頂点数を返す
+    // Return the vertex count for this object
     protected int getVertexCount() {
         return this.nVertex;
     }
 
-    // サイズが変更されたときに頂点の座標を再計算
-    // この座標はオブジェクトのXYZ軸に対して計算されたもの
+    // When either size changes, this function needs to be called
+    // to recalculate the vertex coordinates based on this object's
+    // XYZ axis system
     protected void updateMesh() {
         this.initVertices();
 
@@ -46,7 +47,7 @@ public class Rectangle extends BaseObject {
         this.vertex[3].set(-this.width/2.0, -this.height/2.0, 0);
     }
 
-    // 四角形を描く
+    // Draw the rectangle
     public void draw(Graphics g) {
         if (this.p.z < 0) return;
 
